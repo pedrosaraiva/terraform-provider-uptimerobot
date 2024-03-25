@@ -295,7 +295,10 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	// d.Set("http_auth_type", m.HTTPAuthType)
 
 	d.Set("ignore_ssl_errors", m.IgnoreSSLErrors)
-	d.Set("disable_domain_expire_notifications", m.DisableDomainExpireNotifications)
+
+	if m.Type == "http" || m.Type == "keyword" {
+		d.Set("disable_domain_expire_notifications", !m.DisableDomainExpireNotifications)
+	}
 
 	if err := d.Set("custom_http_headers", m.CustomHTTPHeaders); err != nil {
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)

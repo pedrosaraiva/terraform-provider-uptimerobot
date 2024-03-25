@@ -155,8 +155,8 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		m.IgnoreSSLErrors = false
 	}
 
-	disableDomainExpireNotifications := int(monitor["disable_domain_expire_notifications"].(float64))
-	m.DisableDomainExpireNotifications = disableDomainExpireNotifications == 1
+	// API doesn't return this property so assume it's default off
+	m.DisableDomainExpireNotifications = false
 
 	customHTTPHeaders := make(map[string]string)
 	for k, v := range monitor["custom_http_headers"].(map[string]interface{}) {
@@ -246,9 +246,9 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 
 	if req.Type == "http" || req.Type == "keyword" {
 		if req.DisableDomainExpireNotifications {
-			data.Add("disable_domain_expire_notifications", "1")
-		} else {
 			data.Add("disable_domain_expire_notifications", "0")
+		} else {
+			data.Add("disable_domain_expire_notifications", "1")
 		}
 	}
 
@@ -341,9 +341,9 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 
 	if req.Type == "http" || req.Type == "keyword" {
 		if req.DisableDomainExpireNotifications {
-			data.Add("disable_domain_expire_notifications", "1")
-		} else {
 			data.Add("disable_domain_expire_notifications", "0")
+		} else {
+			data.Add("disable_domain_expire_notifications", "1")
 		}
 	}
 
