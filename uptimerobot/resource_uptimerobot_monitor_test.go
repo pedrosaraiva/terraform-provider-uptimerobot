@@ -223,10 +223,11 @@ func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
 			resource.TestStep{
 				Config: fmt.Sprintf(`
 				resource "uptimerobot_monitor" "test" {
-					friendly_name     = "%s"
-					type              = "%s"
-					url               = "%s"
-					ignore_ssl_errors = true
+					friendly_name                       = "%s"
+					type                                = "%s"
+					url                                 = "%s"
+					ignore_ssl_errors                   = true
+					disable_domain_expire_notifications = true
 				}
 				`, FriendlyName, Type, URL),
 				Check: resource.ComposeTestCheckFunc(
@@ -234,6 +235,7 @@ func TestUptimeRobotDataResourceMonitor_custom_ignore_ssl_errors(t *testing.T) {
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "type", Type),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "url", URL),
 					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "ignore_ssl_errors", "true"),
+					resource.TestCheckResourceAttr("uptimerobot_monitor.test", "disable_domain_expire_notifications", "true"),
 				),
 			},
 			resource.TestStep{

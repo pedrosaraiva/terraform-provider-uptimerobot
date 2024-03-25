@@ -85,6 +85,11 @@ func resourceMonitor() *schema.Resource {
 				Optional: true,
 				Default:  false,
 			},
+			"disable_domain_expire_notifications": {
+				Type:     schema.TypeBool,
+				Optional: true,
+				Default:  false,
+			},
 			"alert_contact": {
 				Type:     schema.TypeList,
 				Optional: true,
@@ -146,6 +151,7 @@ func resourceMonitorCreate(d *schema.ResourceData, m interface{}) error {
 	req.Interval = d.Get("interval").(int)
 
 	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
+	req.DisableDomainExpireNotifications = d.Get("disable_domain_expire_notifications").(bool)
 
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
@@ -226,6 +232,7 @@ func resourceMonitorUpdate(d *schema.ResourceData, m interface{}) error {
 	// Add optional attributes
 	req.Interval = d.Get("interval").(int)
 	req.IgnoreSSLErrors = d.Get("ignore_ssl_errors").(bool)
+	req.DisableDomainExpireNotifications = d.Get("disable_domain_expire_notifications").(bool)
 
 	req.AlertContacts = make([]uptimerobotapi.MonitorRequestAlertContact, len(d.Get("alert_contact").([]interface{})))
 	for k, v := range d.Get("alert_contact").([]interface{}) {
@@ -288,6 +295,7 @@ func updateMonitorResource(d *schema.ResourceData, m uptimerobotapi.Monitor) err
 	// d.Set("http_auth_type", m.HTTPAuthType)
 
 	d.Set("ignore_ssl_errors", m.IgnoreSSLErrors)
+	d.Set("disable_domain_expire_notifications", m.DisableDomainExpireNotifications)
 
 	if err := d.Set("custom_http_headers", m.CustomHTTPHeaders); err != nil {
 		return fmt.Errorf("error setting custom_http_headers for resource %s: %s", d.Id(), err)
