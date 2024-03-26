@@ -74,6 +74,8 @@ type Monitor struct {
 
 	IgnoreSSLErrors bool `json:"ignore_ssl_errors"`
 
+	DisableDomainExpireNotifications bool `json:"disable_domain_expire_notifications"`
+
 	CustomHTTPHeaders map[string]string
 
 	AlertContacts []MonitorAlertContact
@@ -153,6 +155,9 @@ func (client UptimeRobotApiClient) GetMonitor(id int) (m Monitor, err error) {
 		m.IgnoreSSLErrors = false
 	}
 
+	// API doesn't return this property so assume it's default off
+	m.DisableDomainExpireNotifications = false
+
 	customHTTPHeaders := make(map[string]string)
 	for k, v := range monitor["custom_http_headers"].(map[string]interface{}) {
 		customHTTPHeaders[k] = v.(string)
@@ -200,6 +205,8 @@ type MonitorCreateRequest struct {
 
 	IgnoreSSLErrors bool
 
+	DisableDomainExpireNotifications bool
+
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
@@ -235,6 +242,14 @@ func (client UptimeRobotApiClient) CreateMonitor(req MonitorCreateRequest) (m Mo
 		data.Add("ignore_ssl_errors", "1")
 	} else {
 		data.Add("ignore_ssl_errors", "0")
+	}
+
+	if req.Type == "http" || req.Type == "keyword" {
+		if req.DisableDomainExpireNotifications {
+			data.Add("disable_domain_expire_notifications", "0")
+		} else {
+			data.Add("disable_domain_expire_notifications", "1")
+		}
 	}
 
 	acStrings := make([]string, len(req.AlertContacts))
@@ -284,6 +299,8 @@ type MonitorUpdateRequest struct {
 
 	IgnoreSSLErrors bool
 
+	DisableDomainExpireNotifications bool
+
 	AlertContacts []MonitorRequestAlertContact
 
 	CustomHTTPHeaders map[string]string
@@ -320,6 +337,14 @@ func (client UptimeRobotApiClient) UpdateMonitor(req MonitorUpdateRequest) (m Mo
 		data.Add("ignore_ssl_errors", "1")
 	} else {
 		data.Add("ignore_ssl_errors", "0")
+	}
+
+	if req.Type == "http" || req.Type == "keyword" {
+		if req.DisableDomainExpireNotifications {
+			data.Add("disable_domain_expire_notifications", "0")
+		} else {
+			data.Add("disable_domain_expire_notifications", "1")
+		}
 	}
 
 	acStrings := make([]string, len(req.AlertContacts))
